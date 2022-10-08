@@ -16,13 +16,20 @@ export class App extends Component {
 
   formSubmitHandler = data => {
     console.log('data', data);
-    const contact = {
-      id: nanoid(),
+    const addContact = {
+      id: nanoid(3),
       name: data.name,
       number: data.number,
     };
+    if (
+      this.state.contacts.find(
+        contact => contact.name.toLowerCase() === addContact.name.toLowerCase()
+      )
+    ) {
+      return alert(`${addContact.name} is already in contacts!`);
+    }
     this.setState(prevState => ({
-      contacts: [contact, ...prevState.contacts],
+      contacts: [addContact, ...prevState.contacts],
     }));
   };
   changeFilter = event => {
@@ -33,8 +40,13 @@ export class App extends Component {
     const normalizeFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
-      contact.text.toLowerCase().includes(normalizeFilter)
+      contact.name.toLowerCase().includes(normalizeFilter)
     );
+  };
+  deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
   };
   render() {
     const { filter } = this.state;
@@ -45,7 +57,10 @@ export class App extends Component {
         <ContactForm onSubmit={this.formSubmitHandler} />
         <h2>Contacts</h2>
         <Filter value={filter} onChange={this.changeFilter} />
-        <ContactsList contacts={filteredContacts} />
+        <ContactsList
+          contacts={filteredContacts}
+          onDeleteContact={this.deleteContact}
+        />
       </div>
     );
   }
