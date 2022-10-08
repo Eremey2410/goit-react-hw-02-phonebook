@@ -15,7 +15,6 @@ export class App extends Component {
   };
 
   formSubmitHandler = data => {
-    console.log('data', data);
     const addContact = {
       id: nanoid(3),
       name: data.name,
